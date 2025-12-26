@@ -3,13 +3,13 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBXsIwgxdpXbaZnvTIig6r5b-GulFTTTb0",
-  authDomain: "recetas-facil-e3c32.firebaseapp.com",
-  projectId: "recetas-facil-e3c32",
-  storageBucket: "recetas-facil-e3c32.firebasestorage.app",
-  messagingSenderId: "554680193656",
-  appId: "1:554680193656:web:2e2d9ced58da8ddd3d938d",
-  measurementId: "G-Y1ZT6J08H9"
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID, // opcional
 };
 
 
