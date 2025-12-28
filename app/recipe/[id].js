@@ -2,7 +2,8 @@ import { getRecipeById } from "@/services/recipes";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useShopping } from "@/hooks/useShopping";
 
 export default function RecipeDetailScreen() {
 
@@ -10,6 +11,7 @@ export default function RecipeDetailScreen() {
   const router = useRouter();
   const [recipe, setRecipe] = useState(null);
   const  [loading, setLoading] = useState(true);
+  const {addToShopping } = useShopping();
 
   useEffect(() => {
     const load = async () => {
@@ -60,8 +62,23 @@ export default function RecipeDetailScreen() {
           <Text style={styles.difficultyPillText}>{recipe.difficulty}</Text>
         </View>
       </View>
-      <View>
+      <View style={styles.ingredientsHeaderRow}>
         <Text style={styles.textTitle}>Ingredientes</Text>
+        <Pressable
+          style={styles.addBtn}
+          onPress={async () => {
+            try{
+              await addToShopping(recipe);
+              Alert.alert("Éxito", "Ingredientes añadidos a la lista de compras.");
+            }catch(error){
+              Alert.alert("Error", "No se pudieron añadir los ingredientes.");
+              console.log("Error al añadir a compras:", error);
+            }
+          }}
+        >
+          <Ionicons name="cart-outline" size={20} color="#565151ff" />
+          <Text style={styles.addBtnText}> Añadir a compras</Text>
+        </Pressable>
       </View>
       {(recipe.ingredients || []).map((ing, idx) => (
         <View key={`${ing}-${idx}`} style={styles.ingredientsRow}>
@@ -206,5 +223,23 @@ const styles = StyleSheet.create({
     color: "#111",
     lineHeight: 20,
    },
-
+   addBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 6,
+    alignSelf: "flex-start",
+   },
+   addBtnText: {
+    color: "#5a5050ff",
+    fontWeight: "600",
+   },
+   ingredientsHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 14,
+    marginBottom: 8,
+  },
 });
