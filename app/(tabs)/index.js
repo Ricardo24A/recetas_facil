@@ -1,5 +1,5 @@
 import { getAllRecipes } from "@/services/recipes";
-import { addFavorite, removeFavorite } from "@/services/favorites";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useEffect, useState, useMemo } from "react";
 import { Image, StyleSheet, Text, View, FlatList, TextInput, Pressable } from "react-native";
 import { useRouter } from "expo-router";
@@ -11,7 +11,7 @@ export default function HomeScreen() {
   const [recipes, setRecipes] = useState([]);
   const [search, setSearch] = useState("");
   const router = useRouter();
-  const [favoriteIds, setFavoriteIds] = useState(new Set());
+  const { favoriteIds, toggleFavorite } = useFavorites();
 
 
   useEffect(() => {
@@ -29,23 +29,6 @@ export default function HomeScreen() {
       (recipe.title || "").toLowerCase().includes(querry)
     );
   }, [recipes, search]);
-
-  const toggleFavorite = async (recipeId) => {
-    const isFav = favoriteIds.has(recipeId);
-
-    const next = new Set(favoriteIds);
-    if(isFav) next.delete(recipeId);
-    else next.add(recipeId);
-    setFavoriteIds(next);
-
-    try{
-      if(isFav) await removeFavorite(recipeId);
-      else await addFavorite(recipeId);
-    } catch(e){
-      console.error("Error actulizando favoritos:", e);
-      setFavoriteIds(favoriteIds);
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -72,7 +55,9 @@ export default function HomeScreen() {
         ListEmptyComponent={
           <Text>No se encontraron recetas.</Text>
         }
-        renderItem={({ item: recipe }) => (
+        renderItem={({ item: recipe }) => {
+          const isFav = favoriteIds.has(recipe.id);
+          return (
           <Pressable onPress={() => router.push(`/recipe/${recipe.id}`)}>
             <View style={styles.cardPrincipal} key={recipe.id}>
               <View style={styles.imageWrapper}>
@@ -83,6 +68,16 @@ export default function HomeScreen() {
                 <View style={styles.categoryPill}>
                   <Text style={styles.categoryText}>{recipe.category}</Text>
                 </View>
+              <Pressable
+                    style={styles.favoriteBtn}
+                    onPress={() => toggleFavorite(recipe.id)}
+                  >
+                    <Ionicons
+                      name={isFav ? "heart" : "heart-outline"}
+                      size={18}
+                      color={isFav ? "#ef4444" : "#9ca3af"}
+                    />
+                  </Pressable>
               </View>
 
               <Text style={styles.textTitle}>{recipe.title}</Text>
@@ -103,7 +98,8 @@ export default function HomeScreen() {
               </View>
             </View>
           </Pressable>
-        )}
+        );
+        }}
       />
     </View>
   );
@@ -218,4 +214,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
   },
+  favoriteBtn: {
+    position: "absolute",
+    right: 10,
+    top: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  }
+
 });
