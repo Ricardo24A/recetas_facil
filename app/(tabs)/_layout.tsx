@@ -44,6 +44,17 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="planificador"
+        options={{
+          title: "Planificador",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={18} color={color} />
+          ),
+        }}
+      />
+
     </Tabs>
   );
 }
