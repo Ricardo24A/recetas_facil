@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { getThemePreference, saveThemePreference } from "@/services/userPreferences";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext({
   theme: "light",
@@ -13,25 +13,37 @@ const ThemeContext = createContext({
 });
 
 export function ThemeProvider({ children }) {
-  const { user } = useAuthSession();
+  const { user, loadingAuth } = useAuthSession();
   const [theme, setThemeState] = useState("light");
   const [isLoading, setIsLoading] = useState(true);
 
   // Cargar preferencia del usuario cuando inicia sesión
-  useEffect(() => {
-    async function loadTheme() {
-      if (user && !user.isAnonymous) {
-        try {
-          const savedTheme = await getThemePreference();
-          setThemeState(savedTheme);
-        } catch (error) {
-          console.log("Error cargando tema:", error);
-        }
-      }
-      setIsLoading(false);
+  const loadTheme = useCallback(async () => {
+    if (loadingAuth) {
+      // Aún estamos verificando el estado de autenticación
+      return;
     }
+
+    if (user && !user.isAnonymous) {
+      try {
+        console.log("Cargando tema para usuario:", user.uid);
+        const savedTheme = await getThemePreference();
+        console.log("Tema cargado:", savedTheme);
+        setThemeState(savedTheme);
+      } catch (error) {
+        console.log("Error cargando tema:", error);
+        setThemeState("light");
+      }
+    } else {
+      // Usuario no autenticado o anónimo - usar tema por defecto
+      setThemeState("light");
+    }
+    setIsLoading(false);
+  }, [user, loadingAuth]);
+
+  useEffect(() => {
     loadTheme();
-  }, [user]);
+  }, [loadTheme]);
 
   const toggleTheme = async () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -39,7 +51,9 @@ export function ThemeProvider({ children }) {
     
     if (user && !user.isAnonymous) {
       try {
+        console.log("Guardando tema:", newTheme);
         await saveThemePreference(newTheme);
+        console.log("Tema guardado correctamente");
       } catch (error) {
         console.log("Error guardando preferencia de tema:", error);
       }

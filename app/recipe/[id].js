@@ -111,8 +111,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   containerScroll: {
+    paddingTop: 65,
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 50,
   },
   backRow: {
     flexDirection: "row",

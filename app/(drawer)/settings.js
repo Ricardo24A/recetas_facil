@@ -5,6 +5,8 @@ import { StyleSheet, Switch, Text, View } from "react-native";
 export default function SettingsScreen() {
   const { isDark, toggleTheme, colors } = useTheme();
 
+  
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.title, { color: colors.text }]}>Configuración</Text>

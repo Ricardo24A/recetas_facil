@@ -1,9 +1,11 @@
 import { useTheme } from "@/contexts/ThemeContext";
+import { loadMealPlan, saveMealPlan } from "@/services/planner";
 import { getAllRecipes } from "@/services/recipes";
 import { addRecipeToShopping } from "@/services/shopping";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   Image,
@@ -49,18 +51,51 @@ export default function PlannerScreen() {
   const [recipes, setRecipes] = useState([]);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [activeSlotKey, setActiveSlotKey] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [planBySlot, setPlanBySlot] = useState({});
 
   const weekLabel = useMemo(() => formatWeekLabel(weekStart), [weekStart]);
 
+  // Cargar recetas disponibles
   useEffect(() => {
     const load = async () => {
       const data = await getAllRecipes();
+      console.log("Recetas cargadas:", data?.length || 0);
       setRecipes(data || []);
     };
     load();
   }, []);
+
+  // Cargar plan de la semana cuando cambia weekStart
+  const loadWeekPlan = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      console.log("Cargando plan para semana:", weekStart.toISOString());
+      const savedPlan = await loadMealPlan(weekStart);
+      console.log("Plan cargado:", Object.keys(savedPlan).length, "slots");
+      setPlanBySlot(savedPlan);
+    } catch (error) {
+      console.error("Error cargando plan:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [weekStart]);
+
+  useEffect(() => {
+    loadWeekPlan();
+  }, [loadWeekPlan]);
+
+  // Guardar plan cuando cambia
+  const saveCurrentPlan = useCallback(async (newPlan) => {
+    try {
+      console.log("Guardando plan con", Object.keys(newPlan).length, "slots");
+      await saveMealPlan(weekStart, newPlan);
+      console.log("Plan guardado exitosamente");
+    } catch (error) {
+      console.error("Error guardando plan:", error);
+    }
+  }, [weekStart]);
 
   const rows = useMemo(() => {
     return DAYS.map((day) => {
@@ -89,8 +124,10 @@ export default function PlannerScreen() {
   function selectRecipe(recipe) {
     if (!activeSlotKey) return;
 
-    setPlanBySlot((prev) => ({
-      ...prev,
+    console.log("Seleccionando receta:", recipe.title, "para slot:", activeSlotKey);
+    
+    const newPlan = {
+      ...planBySlot,
       [activeSlotKey]: {
         id: recipe.id,
         title: recipe.title,
@@ -98,17 +135,20 @@ export default function PlannerScreen() {
         prepTime: recipe.prepTime,
         difficulty: recipe.difficulty,
       },
-    }));
-
+    };
+    
+    console.log("Nuevo plan:", JSON.stringify(newPlan, null, 2));
+    setPlanBySlot(newPlan);
+    saveCurrentPlan(newPlan);
     closePicker();
   }
 
   function removeRecipe(slotKey) {
-    setPlanBySlot((prev) => {
-      const copy = { ...prev };
-      delete copy[slotKey];
-      return copy;
-    });
+    console.log("Removiendo receta de slot:", slotKey);
+    const newPlan = { ...planBySlot };
+    delete newPlan[slotKey];
+    setPlanBySlot(newPlan);
+    saveCurrentPlan(newPlan);
   }
 
   async function addRectasDeLaSemana(){
@@ -137,6 +177,7 @@ export default function PlannerScreen() {
 
   function clearWeek(){
     setPlanBySlot({});
+    saveCurrentPlan({});
   }
 
 
@@ -198,19 +239,24 @@ export default function PlannerScreen() {
         </View>
       </View>
 
-      <FlatList
-        data={rows}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <View style={[styles.dayCard, { backgroundColor: isDark ? "#1e2022" : "#fff", borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
-            <View style={[styles.dayHeader, { backgroundColor: isDark ? "#1e2022" : "#fff" }]}>
-              <Text style={[styles.dayTitle, { color: colors.text }]}>{item.day}</Text>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#059669" />
+        </View>
+      ) : (
+        <FlatList
+          data={rows}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => (
+            <View style={[styles.dayCard, { backgroundColor: isDark ? "#1e2022" : "#fff", borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
+              <View style={[styles.dayHeader, { backgroundColor: isDark ? "#1e2022" : "#fff" }]}>
+                <Text style={[styles.dayTitle, { color: colors.text }]}>{item.day}</Text>
 
-              <Pressable style={styles.addBtn} onPress={() => openPickerFor(item.day)}>
-                <Ionicons name="add" size={18} color="#059669" />
-                <Text style={styles.addBtnText}>Agregar</Text>
+                <Pressable style={styles.addBtn} onPress={() => openPickerFor(item.day)}>
+                  <Ionicons name="add" size={18} color="#059669" />
+                  <Text style={styles.addBtnText}>Agregar</Text>
               </Pressable>
             </View>
 
@@ -238,7 +284,8 @@ export default function PlannerScreen() {
             </View>
           </View>
         )}
-      />
+        />
+      )}
 
       <View style={[styles.bottomBlock, { backgroundColor: colors.background }]}>
         <Pressable style={styles.primaryBtn} onPress={addRectasDeLaSemana}>
@@ -285,6 +332,12 @@ export default function PlannerScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: "#fff" },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
   topBlock: { marginBottom: 10 },
   titleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
