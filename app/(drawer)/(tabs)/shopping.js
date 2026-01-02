@@ -1,3 +1,4 @@
+import { useTheme } from "@/contexts/ThemeContext";
 import { useShopping } from '@/hooks/useShopping';
 import { removerIngredientFromReceta, setIngredientsChecked } from "@/services/shopping";
 import { Ionicons } from '@expo/vector-icons';
@@ -8,15 +9,16 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 export default function ShoppingScreen() {
 
     const { shoppingRecipes, shoppingCount, clearAllShopping, removeFromShopping } = useShopping();
+    const { isDark, colors } = useTheme();
 
     const [openId, setOpenId] = useState(null);
 
     return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>
-          <Text style={styles.title}>Lista de Compras</Text>
-          <View style={styles.countPill}>
+          <Text style={[styles.title, { color: colors.text }]}>Lista de Compras</Text>
+          <View style={[styles.countPill, { backgroundColor: isDark ? "#064e3b" : "#D1FAE5" }]}>
             <Text style={styles.countText}>
               {shoppingCount} {shoppingCount === 1 ? "receta" : "recetas"}
             </Text>
@@ -29,8 +31,8 @@ export default function ShoppingScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.infoBox}>
-        <Text style={styles.infoText}>💡 Click en cada receta para ver los ingredientes</Text>
+      <View style={[styles.infoBox, { backgroundColor: isDark ? "#064e3b" : "#ECFDF5", borderColor: isDark ? "#10b981" : "#A7F3D0" }]}>
+        <Text style={[styles.infoText, { color: isDark ? "#a7f3d0" : "#065F46" }]}>💡 Click en cada receta para ver los ingredientes</Text>
       </View>
 
       <FlatList
@@ -38,19 +40,19 @@ export default function ShoppingScreen() {
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
-        ListEmptyComponent={<Text style={styles.empty}>No tienes recetas en compras.</Text>}
+        ListEmptyComponent={<Text style={[styles.empty, { color: colors.text }]}>No tienes recetas en compras.</Text>}
         renderItem={({ item }) => {
           const isOpen = openId === item.id;
 
           return (
-            <View style={styles.recipeCard}>
+            <View style={[styles.recipeCard, { backgroundColor: isDark ? "#1e2022" : "#fff", borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
               <Pressable
                 style={styles.recipeHeader}
                 onPress={() => setOpenId(isOpen ? null : item.id)}
               >
                 <View style={styles.recipeHeaderLeft}>
-                  <Text style={styles.recipeTitle}>{item.title}</Text>
-                  <Text style={styles.recipeSubtitle}>
+                  <Text style={[styles.recipeTitle, { color: colors.text }]}>{item.title}</Text>
+                  <Text style={[styles.recipeSubtitle, { color: colors.icon }]}>
                     {item.ingredients?.length || 0} ingredientes
                   </Text>
                 </View>
@@ -59,36 +61,36 @@ export default function ShoppingScreen() {
                   <Ionicons
                     name={isOpen ? "chevron-up-outline" : "chevron-down-outline"}
                     size={18}
-                    color="#9ca3af"
+                    color={colors.icon}
                   />
                   <Pressable
                     style={styles.iconBtn}
                     onPress={() => removeFromShopping(item.id)}
                   >
-                    <Ionicons name="trash-outline" size={18} color="#9ca3af" />
+                    <Ionicons name="trash-outline" size={18} color={colors.icon} />
                   </Pressable>
                 </View>
               </Pressable>
 
               {isOpen && (
-                <View style={styles.ingredientsBox}>
+                <View style={[styles.ingredientsBox, { backgroundColor: isDark ? "#151718" : "#f9fafb", borderTopColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
                   {(item.ingredients || []).map((ingredient, index) => {
 
                     const checked = Boolean(item.checkMap?.[ingredient]);
                     return (
 
                         <View key={`${index}-${ingredient}`} style={styles.ingredientRow}>
-                        <Pressable style={[styles.checkbox, checked && styles.checkBoxMarcada]} onPress={async () => { 
+                        <Pressable style={[styles.checkbox, checked && styles.checkBoxMarcada, { borderColor: isDark ? "#4b5563" : "#d1d5db" }]} onPress={async () => { 
                             await setIngredientsChecked(item.id, ingredient, !checked);
                          }}>
                             {checked && <Ionicons name="checkmark" size={14} color="#fff" />}
                          </Pressable>
                         
-                            <Text style={checked ? styles.ingredientChecked : styles.ingredientText}>{ingredient}</Text>
+                            <Text style={[checked ? styles.ingredientChecked : styles.ingredientText, { color: checked ? colors.icon : colors.text }]}>{ingredient}</Text>
                         <Pressable style={styles.ingredientRemoveBtn} onPress={async () => {
                             await removerIngredientFromReceta(item.id, ingredient);
                         }}>
-                            <Ionicons name="close" size={18} color="#9ca3af" />
+                            <Ionicons name="close" size={18} color={colors.icon} />
                         </Pressable>
                         </View>
                     );

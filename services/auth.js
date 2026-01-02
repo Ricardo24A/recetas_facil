@@ -17,6 +17,8 @@ export async function registerEmail(email, password, displayName){
 
 export async function loginEmail (email, password){
     const cred = await signInWithEmailAndPassword(auth, email, password);
+    console.log("API Firebase Auth: 200 OK");
+    console.log("Usuario autenticado:", cred.user.email);
     return cred.user;
 }
 

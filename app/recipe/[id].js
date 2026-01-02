@@ -1,9 +1,10 @@
+import { useTheme } from "@/contexts/ThemeContext";
+import { useShopping } from "@/hooks/useShopping";
 import { getRecipeById } from "@/services/recipes";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useShopping } from "@/hooks/useShopping";
 
 export default function RecipeDetailScreen() {
 
@@ -12,6 +13,7 @@ export default function RecipeDetailScreen() {
   const [recipe, setRecipe] = useState(null);
   const  [loading, setLoading] = useState(true);
   const {addToShopping } = useShopping();
+  const { isDark, colors } = useTheme();
 
   useEffect(() => {
     const load = async () => {
@@ -27,43 +29,43 @@ export default function RecipeDetailScreen() {
     load();
   }, [id]);
 
-    if (loading) return <View><Text>Cargando...</Text></View>
-    if (!recipe) return <View><Text>Receta no encontrada.</Text></View>
+    if (loading) return <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}><Text style={{ color: colors.text }}>Cargando...</Text></View>
+    if (!recipe) return <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}><Text style={{ color: colors.text }}>Receta no encontrada.</Text></View>
 
   return (
-    <ScrollView contentContainerStyle={styles.containerScroll}>
+    <ScrollView contentContainerStyle={[styles.containerScroll, { backgroundColor: colors.background }]}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-            <Ionicons name="arrow-back" size={18} color="black" />
-            <Text> Volver</Text>
+            <Ionicons name="arrow-back" size={18} color={colors.text} />
+            <Text style={{ color: colors.text }}> Volver</Text>
         </Pressable>
         <View style={styles.imageWrapper}>
         <Image source={{ uri: recipe.imageUrl }} style={styles.cardImage} />
       </View>
 
-      <Text style={styles.textTitle}>{recipe.title}</Text>
-      <Text style={styles.text}>{recipe.description}</Text>
+      <Text style={[styles.textTitle, { color: colors.text }]}>{recipe.title}</Text>
+      <Text style={[styles.text, { color: colors.icon }]}>{recipe.description}</Text>
 
-      <View style={styles.cardBotton}>
+      <View style={[styles.cardBotton, { borderTopColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
         <View style={styles.metaLeft}>
           <View style={styles.item}>
-            <Ionicons name="time-outline" size={16} color="gray" />
-            <Text style={styles.textbotton}>{recipe.prepTime}</Text>
+            <Ionicons name="time-outline" size={16} color={colors.icon} />
+            <Text style={[styles.textbotton, { color: colors.text }]}>{recipe.prepTime}</Text>
           </View>
 
           <Text style={styles.separador}>•</Text>
 
           <View style={styles.item}>
-            <Ionicons name="people-outline" size={16} color="gray" />
-            <Text style={styles.textbotton}>{recipe.servings} personas</Text>
+            <Ionicons name="people-outline" size={16} color={colors.icon} />
+            <Text style={[styles.textbotton, { color: colors.text }]}>{recipe.servings} personas</Text>
           </View>
         </View>
 
-        <View style={styles.difficultyPill}>
+        <View style={[styles.difficultyPill, { backgroundColor: isDark ? "#064e3b" : "#D1FAE5" }]}>
           <Text style={styles.difficultyPillText}>{recipe.difficulty}</Text>
         </View>
       </View>
       <View style={styles.ingredientsHeaderRow}>
-        <Text style={styles.textTitle}>Ingredientes</Text>
+        <Text style={[styles.textTitle, { color: colors.text }]}>Ingredientes</Text>
         <Pressable
           style={styles.addBtn}
           onPress={async () => {
@@ -76,25 +78,25 @@ export default function RecipeDetailScreen() {
             }
           }}
         >
-          <Ionicons name="cart-outline" size={20} color="#565151ff" />
-          <Text style={styles.addBtnText}> Añadir a compras</Text>
+          <Ionicons name="cart-outline" size={20} color={colors.icon} />
+          <Text style={[styles.addBtnText, { color: colors.icon }]}> Añadir a compras</Text>
         </Pressable>
       </View>
       {(recipe.ingredients || []).map((ing, idx) => (
         <View key={`${ing}-${idx}`} style={styles.ingredientsRow}>
             <Text style={styles.dot}>•</Text>
-            <Text style={styles.ingredientText}>{ing}</Text>
+            <Text style={[styles.ingredientText, { color: colors.text }]}>{ing}</Text>
         </View>
       ))}
 
-      <Text style={styles.textTitleStep}>Preparación</Text>
+      <Text style={[styles.textTitleStep, { color: colors.text }]}>Preparación</Text>
 
       {(recipe.instructions || []).map((step, idx) => (
         <View key={`${idx}-${step}`} style={styles.stepRow}>
             <View style={styles.stepNumero}>
                 <Text style={styles.stepNumeroText}>{idx + 1}</Text>  
             </View>  
-            <Text style={styles.stepText}>{step}</Text>
+            <Text style={[styles.stepText, { color: colors.text }]}>{step}</Text>
         </View>
       ))}
     </ScrollView>

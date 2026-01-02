@@ -1,17 +1,18 @@
+import { useTheme } from "@/contexts/ThemeContext";
+import { getAllRecipes } from "@/services/recipes";
+import { addRecipeToShopping } from "@/services/shopping";
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
+  FlatList,
+  Image,
   Modal,
   Pressable,
   StyleSheet,
   Text,
   View,
-  FlatList,
-  Image,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { getAllRecipes } from "@/services/recipes";
-import { addRecipeToShopping } from "@/services/shopping"; 
 
 
 const MEALS = ["Desayuno", "Almuerzo", "Cena"];
@@ -43,6 +44,7 @@ function makeSlotKey(day, meal) {
 export default function PlannerScreen() {
   const [activeMeal, setActiveMeal] = useState("Almuerzo");
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
+  const { isDark, colors } = useTheme();
 
   const [recipes, setRecipes] = useState([]);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -139,44 +141,44 @@ export default function PlannerScreen() {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.topBlock}>
         <View style={styles.titleRow}>
           <View>
-            <Text style={styles.title}>Planificador</Text>
-            <Text style={styles.subtitle}>Organiza tus recetas de la semana</Text>
+            <Text style={[styles.title, { color: colors.text }]}>Planificador</Text>
+            <Text style={[styles.subtitle, { color: colors.icon }]}>Organiza tus recetas de la semana</Text>
           </View>
 
-          <Pressable style={styles.calendarBtn}>
+          <Pressable style={[styles.calendarBtn, { backgroundColor: isDark ? "#064e3b" : "#ECFDF5", borderColor: isDark ? "#10b981" : "#A7F3D0" }]}>
             <Ionicons name="calendar-outline" size={18} color="#059669" />
           </Pressable>
         </View>
 
         <View style={styles.weekRow}>
           <Pressable
-            style={styles.weekArrow}
+            style={[styles.weekArrow, { borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}
             onPress={() => {
               const prev = new Date(weekStart);
               prev.setDate(prev.getDate() - 7);
               setWeekStart(prev);
             }}
           >
-            <Ionicons name="chevron-back" size={18} color="#111" />
+            <Ionicons name="chevron-back" size={18} color={colors.text} />
           </Pressable>
 
-          <View style={styles.weekPill}>
-            <Text style={styles.weekText}>{weekLabel}</Text>
+          <View style={[styles.weekPill, { borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
+            <Text style={[styles.weekText, { color: colors.text }]}>{weekLabel}</Text>
           </View>
 
           <Pressable
-            style={styles.weekArrow}
+            style={[styles.weekArrow, { borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}
             onPress={() => {
               const next = new Date(weekStart);
               next.setDate(next.getDate() + 7);
               setWeekStart(next);
             }}
           >
-            <Ionicons name="chevron-forward" size={18} color="#111" />
+            <Ionicons name="chevron-forward" size={18} color={colors.text} />
           </Pressable>
         </View>
 
@@ -186,10 +188,10 @@ export default function PlannerScreen() {
             return (
               <Pressable
                 key={meal}
-                style={[styles.mealTab, selected && styles.mealTabActive]}
+                style={[styles.mealTab, { borderColor: isDark ? "#2d3134" : "#e5e7eb" }, selected && styles.mealTabActive]}
                 onPress={() => setActiveMeal(meal)}
               >
-                <Text style={[styles.mealTabText, selected && styles.mealTabTextActive]}>{meal}</Text>
+                <Text style={[styles.mealTabText, { color: colors.text }, selected && styles.mealTabTextActive]}>{meal}</Text>
               </Pressable>
             );
           })}
@@ -202,9 +204,9 @@ export default function PlannerScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
-          <View style={styles.dayCard}>
-            <View style={styles.dayHeader}>
-              <Text style={styles.dayTitle}>{item.day}</Text>
+          <View style={[styles.dayCard, { backgroundColor: isDark ? "#1e2022" : "#fff", borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
+            <View style={[styles.dayHeader, { backgroundColor: isDark ? "#1e2022" : "#fff" }]}>
+              <Text style={[styles.dayTitle, { color: colors.text }]}>{item.day}</Text>
 
               <Pressable style={styles.addBtn} onPress={() => openPickerFor(item.day)}>
                 <Ionicons name="add" size={18} color="#059669" />
@@ -214,11 +216,11 @@ export default function PlannerScreen() {
 
             <View style={styles.dayBody}>
               {item.recipe ? (
-                <View style={styles.recipeMiniCard}>
+                <View style={[styles.recipeMiniCard, { backgroundColor: isDark ? "#151718" : "#f9fafb", borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
                   <Image source={{ uri: item.recipe.imageUrl }} style={styles.recipeMiniImage} />
                   <View style={styles.recipeMiniInfo}>
-                    <Text style={styles.recipeMiniTitle}>{item.recipe.title}</Text>
-                    <Text style={styles.recipeMiniMeta}>
+                    <Text style={[styles.recipeMiniTitle, { color: colors.text }]}>{item.recipe.title}</Text>
+                    <Text style={[styles.recipeMiniMeta, { color: colors.icon }]}>
                       {item.recipe.prepTime} · {item.recipe.difficulty}
                     </Text>
                   </View>
@@ -227,18 +229,18 @@ export default function PlannerScreen() {
                     style={styles.removeMiniBtn}
                     onPress={() => removeRecipe(item.slotKey)}
                   >
-                    <Ionicons name="close" size={18} color="#9ca3af" />
+                    <Ionicons name="close" size={18} color={colors.icon} />
                   </Pressable>
                 </View>
               ) : (
-                <Text style={styles.emptyText}>Sin receta asignada</Text>
+                <Text style={[styles.emptyText, { color: colors.icon }]}>Sin receta asignada</Text>
               )}
             </View>
           </View>
         )}
       />
 
-      <View style={styles.bottomBlock}>
+      <View style={[styles.bottomBlock, { backgroundColor: colors.background }]}>
         <Pressable style={styles.primaryBtn} onPress={addRectasDeLaSemana}>
           <Text style={styles.primaryBtnText}>Generar compras de la semana</Text>
         </Pressable>
@@ -250,11 +252,11 @@ export default function PlannerScreen() {
       <Modal visible={isPickerOpen} transparent animationType="fade" onRequestClose={closePicker}>
         <Pressable style={styles.modalBackdrop} onPress={closePicker} />
 
-        <View style={styles.modalCard}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Seleccionar Receta</Text>
+        <View style={[styles.modalCard, { backgroundColor: colors.background }]}>
+          <View style={[styles.modalHeader, { borderBottomColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Seleccionar Receta</Text>
             <Pressable onPress={closePicker}>
-              <Ionicons name="close" size={20} color="#6b7280" />
+              <Ionicons name="close" size={20} color={colors.icon} />
             </Pressable>
           </View>
 
@@ -264,11 +266,11 @@ export default function PlannerScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.modalListContent}
             renderItem={({ item: recipe }) => (
-              <Pressable style={styles.modalRecipeRow} onPress={() => selectRecipe(recipe)}>
+              <Pressable style={[styles.modalRecipeRow, { backgroundColor: isDark ? "#1e2022" : "#f9fafb" }]} onPress={() => selectRecipe(recipe)}>
                 <Image source={{ uri: recipe.imageUrl }} style={styles.modalRecipeImage} />
                 <View style={styles.modalRecipeInfo}>
-                  <Text style={styles.modalRecipeTitle}>{recipe.title}</Text>
-                  <Text style={styles.modalRecipeMeta}>
+                  <Text style={[styles.modalRecipeTitle, { color: colors.text }]}>{recipe.title}</Text>
+                  <Text style={[styles.modalRecipeMeta, { color: colors.icon }]}>
                     {recipe.prepTime} · {recipe.difficulty}
                   </Text>
                 </View>

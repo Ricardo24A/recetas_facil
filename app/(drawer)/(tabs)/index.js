@@ -1,9 +1,10 @@
-import { getAllRecipes } from "@/services/recipes";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useFavorites } from "@/hooks/useFavorites";
-import { useEffect, useState, useMemo } from "react";
-import { Image, StyleSheet, Text, View, FlatList, TextInput, Pressable } from "react-native";
-import { useRouter } from "expo-router";
+import { getAllRecipes } from "@/services/recipes";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
+import { FlatList, Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 
     
@@ -12,6 +13,7 @@ export default function HomeScreen() {
   const [search, setSearch] = useState("");
   const router = useRouter();
   const { favoriteIds, toggleFavorite } = useFavorites();
+  const { isDark, colors } = useTheme();
 
 
   useEffect(() => {
@@ -31,19 +33,19 @@ export default function HomeScreen() {
   }, [recipes, search]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.topBlock}>
-        <Text style={styles.uidText}>Todas las recetas</Text>
+        <Text style={[styles.uidText, { color: colors.text }]}>Todas las recetas</Text>
 
-        <View style={styles.input}>
-          <Ionicons name="search-outline" size={18} color="#9ca3af"/>
+        <View style={[styles.input, { backgroundColor: isDark ? "#1e2022" : "#fff", borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
+          <Ionicons name="search-outline" size={18} color={colors.icon}/>
           <TextInput type="text" placeholder="Buscar recetas..." 
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor={colors.icon}
           value={search}
           onChangeText={setSearch}
           autoCorrect={false}
           selectionColor="none"
-          style={ styles.inputContainer} />
+          style={[styles.inputContainer, { color: colors.text }]} />
         </View>
       </View>
       
@@ -53,13 +55,13 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
         ListEmptyComponent={
-          <Text>No se encontraron recetas.</Text>
+          <Text style={{ color: colors.text }}>No se encontraron recetas.</Text>
         }
         renderItem={({ item: recipe }) => {
           const isFav = favoriteIds.has(recipe.id);
           return (
           <Pressable onPress={() => router.push(`/recipe/${recipe.id}`)}>
-            <View style={styles.cardPrincipal} key={recipe.id}>
+            <View style={[styles.cardPrincipal, { backgroundColor: isDark ? "#1e2022" : "#f8f8f8" }]} key={recipe.id}>
               <View style={styles.imageWrapper}>
                 <Image
                     source={{ uri: recipe.imageUrl }}
@@ -69,32 +71,32 @@ export default function HomeScreen() {
                   <Text style={styles.categoryText}>{recipe.category}</Text>
                 </View>
               <Pressable
-                    style={styles.favoriteBtn}
+                    style={[styles.favoriteBtn, { backgroundColor: isDark ? "rgba(30, 32, 34, 0.9)" : "rgba(255, 255, 255, 0.8)", borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}
                     onPress={() => toggleFavorite(recipe.id)}
                   >
                     <Ionicons
                       name={isFav ? "heart" : "heart-outline"}
                       size={18}
-                      color={isFav ? "#ef4444" : "#9ca3af"}
+                      color={isFav ? "#ef4444" : colors.icon}
                     />
                   </Pressable>
               </View>
 
-              <Text style={styles.textTitle}>{recipe.title}</Text>
-              <Text>{recipe.description}</Text>
-              <View style={styles.cardBotton}>
+              <Text style={[styles.textTitle, { color: colors.text }]}>{recipe.title}</Text>
+              <Text style={{ color: colors.icon }}>{recipe.description}</Text>
+              <View style={[styles.cardBotton, { borderTopColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
                 <View style={styles.metaLeft}>
                   <View  style={styles.item}>
-                    <Ionicons name="time-outline" size={16} color="gray" />
-                    <Text style={styles.textbotton}>{recipe.prepTime}</Text>
+                    <Ionicons name="time-outline" size={16} color={colors.icon} />
+                    <Text style={[styles.textbotton, { color: colors.text }]}>{recipe.prepTime}</Text>
                   </View>
                   <Text style={styles.separador}>•</Text>
                   <View style={styles.item}>
-                    <Ionicons name="people-outline" size={16} color="gray" />
-                    <Text style={styles.textbotton}>{recipe.servings} personas</Text>
+                    <Ionicons name="people-outline" size={16} color={colors.icon} />
+                    <Text style={[styles.textbotton, { color: colors.text }]}>{recipe.servings} personas</Text>
                   </View>
                 </View>
-              <Text style={styles.difficultyText}>{recipe.difficulty}</Text>
+              <Text style={[styles.difficultyText, { color: colors.icon }]}>{recipe.difficulty}</Text>
               </View>
             </View>
           </Pressable>

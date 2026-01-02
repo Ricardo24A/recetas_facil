@@ -1,12 +1,15 @@
-import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View, Pressable, FlatList, Image } from "react-native";
-import  {useEffect, useState} from "react";
-import {useRouter} from "expo-router";
-import { getRecipeById } from "@/services/recipes";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useFavorites } from "@/hooks/useFavorites";
+import { getRecipeById } from "@/services/recipes";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native";
+
 export default function FavoritesScreen() {
     const router = useRouter();
     const { favoriteIds, isFavoriteLoading, toggleFavorite } = useFavorites();
+    const { isDark, colors } = useTheme();
 
   const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 
@@ -34,10 +37,10 @@ export default function FavoritesScreen() {
 
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.topBlockFav}>
             <View style={styles.favTitleRow}>
-            <Text style={styles.uidText}>Mis Favoritos</Text>
+            <Text style={[styles.uidText, { color: colors.text }]}>Mis Favoritos</Text>
             <View>
                 <Text style={styles.favCountText}>{favoriteRecipes.length}</Text>
             </View>
@@ -49,10 +52,10 @@ export default function FavoritesScreen() {
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 80 }}
-            ListEmptyComponent={<Text>No tienes favoritos aún.</Text>}
+            ListEmptyComponent={<Text style={{ color: colors.text }}>No tienes favoritos aún.</Text>}
             renderItem={({ item: recipe }) => (
             <Pressable onPress={() => router.push(`/recipe/${recipe.id}`)}>
-                <View style={styles.cardPrincipal}>
+                <View style={[styles.cardPrincipal, { backgroundColor: isDark ? "#1e2022" : "#f8f8f8" }]}>
                 <View style={styles.imageWrapper}>
                     <Image source={{ uri: recipe.imageUrl }} style={styles.cardImage} />
 
@@ -61,32 +64,32 @@ export default function FavoritesScreen() {
                     </View>
 
                      <Pressable
-                  style={styles.favoriteBtn}
+                  style={[styles.favoriteBtn, { backgroundColor: isDark ? "rgba(30, 32, 34, 0.9)" : "#fff", borderColor: isDark ? "#2d3134" : "#e5e7eb" }]}
                   onPress={() => toggleFavorite(recipe.id)}
                 >
                   <Ionicons name="heart" size={18} color="#ef4444" />
                 </Pressable>
                 </View>
 
-                <Text style={styles.text}>{recipe.title}</Text>
-                <Text>{recipe.description}</Text>
+                <Text style={[styles.text, { color: colors.text }]}>{recipe.title}</Text>
+                <Text style={{ color: colors.icon }}>{recipe.description}</Text>
 
-                <View style={styles.cardBotton}>
+                <View style={[styles.cardBotton, { borderTopColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
                     <View style={styles.metaLeft}>
                     <View style={styles.item}>
-                        <Ionicons name="time-outline" size={16} color="gray" />
-                        <Text style={styles.textbotton}>{recipe.prepTime}</Text>
+                        <Ionicons name="time-outline" size={16} color={colors.icon} />
+                        <Text style={[styles.textbotton, { color: colors.text }]}>{recipe.prepTime}</Text>
                     </View>
 
                     <Text style={styles.separador}>•</Text>
 
                     <View style={styles.item}>
-                        <Ionicons name="people-outline" size={16} color="gray" />
-                        <Text style={styles.textbotton}>{recipe.servings} personas</Text>
+                        <Ionicons name="people-outline" size={16} color={colors.icon} />
+                        <Text style={[styles.textbotton, { color: colors.text }]}>{recipe.servings} personas</Text>
                     </View>
                     </View>
 
-                    <Text style={styles.difficultyText}>{recipe.difficulty}</Text>
+                    <Text style={[styles.difficultyText, { color: colors.icon }]}>{recipe.difficulty}</Text>
                 </View>
                 </View>
             </Pressable>
