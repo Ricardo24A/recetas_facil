@@ -19,15 +19,24 @@ import {
 
 const MEALS = ["Desayuno", "Almuerzo", "Cena"];
 const DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+const MONTHS = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
 function formatWeekLabel(dateStart) {
   const start = new Date(dateStart);
   const end = new Date(start);
   end.setDate(start.getDate() + 6);
 
-  const months = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-  const s = `${start.getDate()}–${end.getDate()} ${months[end.getMonth()]}`;
-  return `Semana ${s}`;
+  const startDay = start.getDate();
+  const endDay = end.getDate();
+  const startMonth = MONTHS[start.getMonth()];
+  const endMonth = MONTHS[end.getMonth()];
+
+  // Si el mes es diferente, mostrar ambos meses
+  if (start.getMonth() !== end.getMonth()) {
+    return `Semana ${startDay} ${startMonth} – ${endDay} ${endMonth}`;
+  }
+  
+  return `Semana ${startDay} – ${endDay} ${endMonth}`;
 }
 
 function getMonday(d = new Date()) {

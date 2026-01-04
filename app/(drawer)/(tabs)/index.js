@@ -2,8 +2,9 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { getAllRecipes } from "@/services/recipes";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FlatList, Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 
@@ -15,14 +16,16 @@ export default function HomeScreen() {
   const { favoriteIds, toggleFavorite } = useFavorites();
   const { isDark, colors } = useTheme();
 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getAllRecipes();
-      setRecipes(data);
-    };
-    fetchData();
-  }, []);
+  // Recargar recetas cada vez que la pantalla recibe foco
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const data = await getAllRecipes();
+        setRecipes(data);
+      };
+      fetchData();
+    }, [])
+  );
 
   const filteredRecipes = useMemo(()=>{
     const querry = search.trim().toLowerCase();
@@ -64,8 +67,10 @@ export default function HomeScreen() {
             <View style={[styles.cardPrincipal, { backgroundColor: isDark ? "#1e2022" : "#f8f8f8" }]} key={recipe.id}>
               <View style={styles.imageWrapper}>
                 <Image
-                    source={{ uri: recipe.imageUrl }}
-                    style={styles.cardImage}
+                    source={{ uri: recipe.imageUrl && recipe.imageUrl.trim() ? recipe.imageUrl.trim() : "https://placehold.co/400x200/e5e7eb/9ca3af?text=Sin+imagen" }}
+                    style={[styles.cardImage, { backgroundColor: "#e5e7eb" }]}
+                    resizeMode="cover"
+                    onError={(e) => console.log("Error imagen:", recipe.title, e.nativeEvent.error)}
                 />
                 <View style={styles.categoryPill}>
                   <Text style={styles.categoryText}>{recipe.category}</Text>

@@ -44,13 +44,17 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {/* Sección de información */}
+      {/* Sección de informacion */}
       <View style={[styles.section, { backgroundColor: isDark ? "#1e2022" : "#f8f8f8" }]}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Información</Text>
 
         <View style={[styles.infoRow, { borderBottomColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
           <Text style={[styles.infoLabel, { color: colors.icon }]}>Versión</Text>
           <Text style={[styles.infoValue, { color: colors.text }]}>1.0.0</Text>
+        </View>
+        <View style={[styles.infoRow, { borderBottomColor: isDark ? "#2d3134" : "#e5e7eb" }]}>
+          <Text style={[styles.infoLabel, { color: colors.icon }]}>Desarrollado por</Text>
+          <Text style={[styles.infoValue, { color: colors.text }]}>Ricardo Asanza - 2025</Text>
         </View>
       </View>
     </View>

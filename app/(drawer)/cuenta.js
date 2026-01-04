@@ -261,15 +261,12 @@ export default function CuentaScreen() {
       </View>
 
       {/* Sección de estadisticas */}
-      <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Estadísticas</Text>
-        
-        <View style={styles.statsRow}>
-          <View style={[styles.statCard, { backgroundColor: colors.tint + "15" }]}>
-            <Ionicons name="heart" size={28} color={colors.tint} />
-            <Text style={[styles.statNumber, { color: colors.text }]}>{favoritesCount}</Text>
-            <Text style={[styles.statLabel, { color: colors.icon }]}>Favoritos</Text>
-          </View>
+      <View style={[styles.statsSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.statsSectionTitle, { color: colors.text }]}>Estadísticas</Text>
+        <View style={[styles.statBadge, { backgroundColor: colors.tint + "15" }]}>
+          <Ionicons name="heart" size={14} color={colors.tint} />
+          <Text style={[styles.statBadgeNumber, { color: colors.text }]}>{favoritesCount}</Text>
+          <Text style={[styles.statBadgeLabel, { color: colors.icon }]}>Favoritos</Text>
         </View>
       </View>
 
@@ -558,24 +555,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  statsRow: {
+  statsSection: {
     flexDirection: "row",
-    justifyContent: "center",
-  },
-  statCard: {
     alignItems: "center",
-    padding: 20,
+    justifyContent: "space-between",
+    padding: 14,
     borderRadius: 12,
-    minWidth: 120,
+    borderWidth: 1,
+    marginBottom: 16,
   },
-  statNumber: {
-    fontSize: 32,
-    fontWeight: "800",
-    marginTop: 8,
+  statsSectionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
   },
-  statLabel: {
+  statBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  statBadgeNumber: {
     fontSize: 14,
-    marginTop: 4,
+    fontWeight: "700",
+  },
+  statBadgeLabel: {
+    fontSize: 12,
   },
   categoriesGrid: {
     flexDirection: "row",

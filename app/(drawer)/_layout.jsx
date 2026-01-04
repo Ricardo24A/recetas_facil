@@ -1,10 +1,21 @@
 import { useTheme } from "@/contexts/ThemeContext";
+import { checkIsAdmin } from "@/services/admin";
 import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 export default function DrawerLayout() {
     const { isDark, colors } = useTheme();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        const verifyAdmin = async () => {
+            const adminStatus = await checkIsAdmin();
+            setIsAdmin(adminStatus);
+        };
+        verifyAdmin();
+    }, []);
 
     return( 
         <Drawer
@@ -64,6 +75,18 @@ export default function DrawerLayout() {
                     drawerIcon: ({color, size}) => (
                         <Ionicons name="person-outline" size={size} color={color} />
                     ),
+                }}
+            />
+
+            <Drawer.Screen
+                name="admin"
+                options={{
+                    drawerLabel: "Administración",
+                    title: "Administración",
+                    drawerIcon: ({color, size}) => (
+                        <Ionicons name="shield-outline" size={size} color={color} />
+                    ),
+                    drawerItemStyle: isAdmin ? {} : { display: "none" },
                 }}
             />
         </Drawer>

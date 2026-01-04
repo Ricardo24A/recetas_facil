@@ -91,7 +91,7 @@ export default function RecipeDetailScreen() {
 
       <Text style={[styles.textTitleStep, { color: colors.text }]}>Preparación</Text>
 
-      {(recipe.instructions || []).map((step, idx) => (
+      {(recipe.steps || recipe.instructions || []).map((step, idx) => (
         <View key={`${idx}-${step}`} style={styles.stepRow}>
             <View style={styles.stepNumero}>
                 <Text style={styles.stepNumeroText}>{idx + 1}</Text>  
