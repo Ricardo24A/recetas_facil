@@ -33,7 +33,10 @@ export default function RecipeDetailScreen() {
     if (!recipe) return <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}><Text style={{ color: colors.text }}>Receta no encontrada.</Text></View>
 
   return (
-    <ScrollView contentContainerStyle={[styles.containerScroll, { backgroundColor: colors.background }]}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <ScrollView 
+      style={{ flex: 1, backgroundColor: colors.background }} 
+      contentContainerStyle={[styles.containerScroll, { backgroundColor: colors.background, flexGrow: 1 }]}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
             <Ionicons name="arrow-back" size={18} color={colors.text} />
             <Text style={{ color: colors.text }}> Volver</Text>
@@ -100,6 +103,7 @@ export default function RecipeDetailScreen() {
         </View>
       ))}
     </ScrollView>
+    </View>
   );
 }
 

@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ricardo.recetasfacil"
+      "bundleIdentifier": "com.ricardo.recetasfacil",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.ricardo.recetasfacil",
@@ -45,6 +48,18 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "29ac5526-cde4-4389-a8a0-17b2ddd5a10e"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/29ac5526-cde4-4389-a8a0-17b2ddd5a10e"
     }
   }
 }

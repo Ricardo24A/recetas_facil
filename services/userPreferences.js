@@ -1,10 +1,6 @@
 import { auth, db } from "@/constants/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
-/**
- * Guarda la preferencia del tema del usuario en Firestore
- * @param {"light" | "dark"} theme 
- */
 export async function saveThemePreference(theme) {
   const uid = auth.currentUser?.uid;
   if (!uid) {
@@ -35,10 +31,6 @@ export async function saveThemePreference(theme) {
   }
 }
 
-/**
- * Obtiene la preferencia del tema del usuario desde Firestore
- * @returns {Promise<"light" | "dark">}
- */
 export async function getThemePreference() {
   const uid = auth.currentUser?.uid;
   if (!uid) {

@@ -22,9 +22,7 @@ export async function createRecipe(recipeId, data) {
   return recipeId;
 }
 
-/*
- Actualiza campos de una receta existente.
- */
+
 export async function updateRecipe(recipeId, partialData) {
   if (!recipeId) throw new Error("recipeId es requerido");
 
@@ -38,9 +36,7 @@ export async function updateRecipe(recipeId, partialData) {
   return recipeId;
 }
 
-/*
- Elimina una receta.
- */
+
 export async function deleteRecipe(recipeId) {
   if (!recipeId) throw new Error("recipeId es requerido");
 

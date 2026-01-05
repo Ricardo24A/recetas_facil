@@ -260,7 +260,7 @@ export default function CuentaScreen() {
         </View>
       </View>
 
-      {/* Sección de estadisticas */}
+      {/* Seccion de estadisticas */}
       <View style={[styles.statsSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <Text style={[styles.statsSectionTitle, { color: colors.text }]}>Estadísticas</Text>
         <View style={[styles.statBadge, { backgroundColor: colors.tint + "15" }]}>
@@ -270,7 +270,7 @@ export default function CuentaScreen() {
         </View>
       </View>
 
-      {/* Sección de categorias favoritas */}
+      {/* Seccion de categorias favoritas */}
       <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Categorías Favoritas</Text>
         <Text style={[styles.sectionSubtitle, { color: colors.icon }]}>

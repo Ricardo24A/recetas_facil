@@ -46,10 +46,6 @@ export async function reauthenticate(password){
     await reauthenticateWithCredential(user, credential);
 }
 
-/**
- * Envía un email de verificación al nuevo correo.
- * El email se actualizará automáticamente cuando el usuario verifique el enlace.
- */
 export async function updateUserEmail(newEmail){
     const user = auth.currentUser;
     if(!user) throw new Error ("Usuario no autenticado");

@@ -337,7 +337,7 @@ export default function AdminScreen() {
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ paddingBottom: 100 }}
           >
-            {/* Título */}
+            {/* Titulo */}
             <Text style={[styles.inputLabel, { color: colors.text }]}>Título *</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
@@ -347,7 +347,7 @@ export default function AdminScreen() {
               placeholderTextColor={colors.icon}
             />
 
-            {/* Descripción */}
+            {/* Descripcion */}
             <Text style={[styles.inputLabel, { color: colors.text }]}>Descripción</Text>
             <TextInput
               style={[styles.input, styles.textArea, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
@@ -381,7 +381,7 @@ export default function AdminScreen() {
               </View>
             ) : null}
 
-            {/* Tiempo de preparación */}
+            {/* Tiempo de preparacion */}
             <Text style={[styles.inputLabel, { color: colors.text }]}>Tiempo de Preparación</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
@@ -416,7 +416,7 @@ export default function AdminScreen() {
               </View>
             </View>
 
-            {/* Categoría */}
+            {/* Categoria */}
             <Text style={[styles.inputLabel, { color: colors.text }]}>Categoría</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
@@ -476,7 +476,7 @@ export default function AdminScreen() {
               </View>
             ))}
 
-            {/* Botón Guardar */}
+            {/* Boton Guardar */}
             <Pressable
               style={[styles.saveBtn, { backgroundColor: colors.tint }, saving && { opacity: 0.6 }]}
               onPress={handleSaveRecipe}

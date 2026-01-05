@@ -1,11 +1,6 @@
 import { auth, db } from "@/constants/firebase";
 import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
-/**
- * Genera una clave única para la semana basada en la fecha de inicio (lunes)
- * @param {Date} weekStart - Fecha del lunes de la semana
- * @returns {string} - Clave en formato "YYYY-MM-DD"
- */
 function getWeekKey(weekStart) {
   const d = new Date(weekStart);
   const year = d.getFullYear();
@@ -14,11 +9,6 @@ function getWeekKey(weekStart) {
   return `${year}-${month}-${day}`;
 }
 
-/**
- * Guarda el plan de una semana en Firestore
- * @param {Date} weekStart - Fecha del lunes de la semana
- * @param {Object} planBySlot - Objeto con las recetas por slot {slotKey: recipe}
- */
 export async function saveMealPlan(weekStart, planBySlot) {
   const uid = auth.currentUser?.uid;
   if (!uid) {
@@ -49,11 +39,7 @@ export async function saveMealPlan(weekStart, planBySlot) {
   }
 }
 
-/**
- * Carga el plan de una semana desde Firestore
- * @param {Date} weekStart - Fecha del lunes de la semana
- * @returns {Object} - Objeto con las recetas por slot {slotKey: recipe}
- */
+
 export async function loadMealPlan(weekStart) {
   const uid = auth.currentUser?.uid;
   if (!uid) {
